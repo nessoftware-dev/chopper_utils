@@ -1,0 +1,22 @@
+targets:
+  $default:
+    sources:
+      - openapi_input_folder/**
+      - $package$
+    builders:
+      chopper_generator:
+        options:
+          header: "//Generated code"
+      swagger_dart_code_generator:
+        options:
+          input_folder: 'openapi_input_folder/'
+          output_folder: 'lib/openapi_generated_code/'
+          with_base_url: true
+          with_converter: true
+          use_path_for_request_names: true
+          use_default_null_for_lists: false
+          override_equals_and_hashcode: true
+          build_only_models: false
+          separate_models: true
+          exclude_paths:
+            - ".DS_Store" # how to ignore this file?
