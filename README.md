@@ -1,6 +1,6 @@
 # chopper_utils
 
-Reusable Chopper utilities for authenticated and unauthenticated API clients, common request headers, coordinated access-token refresh, automatic 401 retries, and optional HTTP logging.
+Reusable authentication utilities for Chopper-generated OpenAPI clients, with common request headers, coordinated access-token refresh, automatic 401 retries, and optional HTTP logging.
 
 ---
 
@@ -32,7 +32,7 @@ This package is designed around the following conventions:
 4. **Token Storage**:
    - Token persistence is left up to your application (e.g. `flutter_secure_storage`, `shared_preferences`, or in-memory). Your `ChopperUtils` subclass provides the token through `getAccessToken()` and updates it inside `refreshUserAccessTokenByOpenApi()`.
 5. **Target Platforms**:
-   - Designed for native mobile and desktop platforms (uses `Platform.operatingSystem` for the `x-platform` header).
+   - Android, iOS, Windows, macOS, and Linux. (uses `Platform.operatingSystem` for the `x-platform` header).
 
 ---
 
@@ -126,24 +126,77 @@ final dataResponse = await api.getOpenApiWithAuth().getProtectedData();
 
 ---
 
-### 3. Customizing Headers
+## 3. Customizing Headers
 
-You can override default header names or formats:
+`ChopperUtils` provides flexible options for customizing request headers.
+
+For simple use cases, you can customize individual headers such as `Accept`, `Content-Type`, or `Authorization`.
+
+For more advanced use cases, you can override `getCommonHeaders()` and/or `getAuthHeaders()` to customize the complete set of headers used by the client.
+
+### Customizing Individual Headers
+
+You can override the individual header methods provided by `ChopperUtils`:
 
 ```dart
-class CustomApiUtils extends ChopperUtils<Openapi> {
-  // Customize header names
+class MyChopperUtils extends ChopperUtils<MyApi> {
   @override
-  String getAppVersionHeaderName() => 'x-client-version';
+  String get acceptHeader => 'application/json';
 
   @override
-  String getPlatformHeaderName() => 'x-os';
+  String get contentTypeHeader => 'application/json';
 
-  // Customize token format
   @override
-  String getAuthorizationHeader(String accessToken) => 'JWT $accessToken';
+  String get authorizationHeader => 'Bearer $accessToken';
 }
 ```
+
+### Customizing Complete Header Sets
+
+If you need more control over the headers, you can override `getCommonHeaders()` and/or `getAuthHeaders()`.
+
+`getCommonHeaders()` defines the headers shared by requests.
+
+By default, `getAuthHeaders()` includes the headers returned by `getCommonHeaders()` and adds the authentication-specific headers.
+
+```dart
+class MyChopperUtils extends ChopperUtils<MyApi> {
+  @override
+  Map<String, String> getCommonHeaders() {
+    return {
+      'accept': 'application/json',
+      'x-app-version': '1.2.3',
+      'x-platform': Platform.operatingSystem,
+      'x-custom-header': 'custom-value',
+    };
+  }
+
+  @override
+  Map<String, String> getAuthHeaders() {
+    return {
+      ...getCommonHeaders(),
+      'x-custom-auth-header': 'custom-value',
+    };
+  }
+}
+```
+
+When overriding `getAuthHeaders()`, include `getCommonHeaders()` if you want to retain the common headers defined by your `ChopperUtils` implementation.
+
+You can also add or override authentication-specific headers in the returned map. If the same header name is present in both maps, the value defined in `getAuthHeaders()` takes precedence.
+
+If you want complete control over authenticated request headers, you can omit `getCommonHeaders()` and return your own set of headers instead:
+
+```dart
+@override
+Map<String, String> getAuthHeaders() {
+  return {
+    'authorization': 'Bearer $accessToken',
+  };
+}
+```
+
+Use the individual header methods when you only need to change specific headers. Use `getCommonHeaders()` and/or `getAuthHeaders()` when you need more control over the complete set of request headers.
 
 ---
 
