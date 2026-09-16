@@ -17,12 +17,9 @@ abstract class ChopperUtils<T extends ChopperService> {
 
   String getAppVersion(); // return the app version as string
   String? getAccessToken(); // return the current user's access token
-  Future<bool>
-  refreshUserAccessTokenByOpenApi(); // refresh the user's accesss token e.g. with a refresh token
-  T
-  createOpenApiWithoutAuth(); // return the Openapi class to be used for server calls without authentification
-  T
-  createOpenApiWithAuth(); // return the Openapi class to be used for server calls with authentification
+  Future<bool> refreshUserAccessTokenByOpenApi(); // refresh the user's accesss token e.g. with a refresh token
+  T createOpenApiWithoutAuth(); // return the Openapi class to be used for server calls without authentification
+  T createOpenApiWithAuth(); // return the Openapi class to be used for server calls with authentification
 
   // === functions for optional overwriting headers
 
@@ -84,8 +81,7 @@ abstract class ChopperUtils<T extends ChopperService> {
   bool isAcceptableOpenApiError({required String errorMsg}) {
     // check known errors of FutureBuilder snapshot and return true if just a reload can be executed.
     // Most of them are iOS resume errors (except connection lost).
-    var acceptable =
-        (errorMsg.contains('Connection closed') ||
+    var acceptable = (errorMsg.contains('Connection closed') ||
         errorMsg.contains('Connection reset') ||
         errorMsg.contains('Bad file descriptor') ||
         errorMsg.contains('Read failed') ||

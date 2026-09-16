@@ -13,8 +13,11 @@ Future<FutureResult<Response<AuthResponse>>> login(
   late final Response<AuthResponse> response;
   try {
     response = await chopperUtils.getOpenApiWithoutAuth().authLoginPost(
-      body: LoginRequest(username: username, password: password),
-    );
+          body: LoginRequest(
+            username: username,
+            password: password,
+          ),
+        );
   } catch (e) {
     return FutureResult.error(e.toString());
   }
