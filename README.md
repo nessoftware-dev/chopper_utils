@@ -141,13 +141,18 @@ You can override the individual header methods provided by `ChopperUtils`:
 ```dart
 class MyChopperUtils extends ChopperUtils<MyApi> {
   @override
-  String get acceptHeader => 'application/json';
+  String getAuthorizationHeader(String accessToken) {
+    return 'Token $accessToken';
+  }
 
   @override
-  String get contentTypeHeader => 'application/json';
+  String getAuthorizationHeaderName() => 'X-API-Key';
 
   @override
-  String get authorizationHeader => 'Bearer $accessToken';
+  String getAppVersionHeaderName() => 'X-App-Version';
+
+  @override
+  String getPlatformHeaderName() => 'X-Platform';
 }
 ```
 
