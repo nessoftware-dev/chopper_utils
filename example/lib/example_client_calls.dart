@@ -5,19 +5,19 @@ import 'package:example/openapi_generated_code/openapi.swagger.dart';
 
 // Logs in using the unauthenticated OpenApi client.
 
-Future<FutureResult<Response<AuthResponse>>> login(
-  ExampleChopperUtils chopperUtils, {
+Future<FutureResult<Response<AuthResponse>>> login({
   required String username,
   required String password,
 }) async {
+  final Openapi api = ExampleChopperUtils().getOpenApiWithoutAuth();
   late final Response<AuthResponse> response;
   try {
-    response = await chopperUtils.getOpenApiWithoutAuth().authLoginPost(
-          body: LoginRequest(
-            username: username,
-            password: password,
-          ),
-        );
+    response = await api.authLoginPost(
+      body: LoginRequest(
+        username: username,
+        password: password,
+      ),
+    );
   } catch (e) {
     return FutureResult.error(e.toString());
   }
@@ -30,10 +30,11 @@ Future<FutureResult<Response<AuthResponse>>> login(
 
 // Logs out using the authenticated OpenApi client.
 
-Future<FutureResult<Response>> logout(ExampleChopperUtils chopperUtils) async {
+Future<FutureResult<Response>> logout() async {
+  final Openapi api = ExampleChopperUtils().getOpenApiWithAuth();
   late final Response response;
   try {
-    response = await chopperUtils.getOpenApiWithAuth().authLogoutPost();
+    response = await api.authLogoutPost();
   } catch (e) {
     return FutureResult.error(e.toString());
   }
@@ -46,10 +47,10 @@ Future<FutureResult<Response>> logout(ExampleChopperUtils chopperUtils) async {
 
 // Manually refreshes the access token via `refreshUserAccessTokenByOpenApi`.
 
-Future<FutureResult<bool>> refreshAccessToken(ExampleChopperUtils chopperUtils) async {
+Future<FutureResult<bool>> refreshAccessToken() async {
   late final bool success;
   try {
-    success = await chopperUtils.refreshUserAccessTokenByOpenApi();
+    success = await ExampleChopperUtils().refreshUserAccessTokenByOpenApi();
   } catch (e) {
     return FutureResult.error(e.toString());
   }
@@ -62,10 +63,11 @@ Future<FutureResult<bool>> refreshAccessToken(ExampleChopperUtils chopperUtils) 
 
 // Fetches the public message using the unauthenticated OpenApi client.
 
-Future<FutureResult<Response<Message>>> getPublicMessage(ExampleChopperUtils chopperUtils) async {
+Future<FutureResult<Response<Message>>> getPublicMessage() async {
+  final Openapi api = ExampleChopperUtils().getOpenApiWithoutAuth();
   late final Response<Message> response;
   try {
-    response = await chopperUtils.getOpenApiWithoutAuth().publicMessageGet();
+    response = await api.publicMessageGet();
   } catch (e) {
     return FutureResult.error(e.toString());
   }
@@ -81,10 +83,11 @@ Future<FutureResult<Response<Message>>> getPublicMessage(ExampleChopperUtils cho
 /// If the current access token is expired, OpenApiAuthenticator intercepts
 /// the 401 response, refreshes the token, and retries automatically.
 
-Future<FutureResult<Response<Message>>> getPrivateMessage(ExampleChopperUtils chopperUtils) async {
+Future<FutureResult<Response<Message>>> getPrivateMessage() async {
+  final Openapi api = ExampleChopperUtils().getOpenApiWithAuth();
   late final Response<Message> response;
   try {
-    response = await chopperUtils.getOpenApiWithAuth().privateMessageGet();
+    response = await api.privateMessageGet();
   } catch (e) {
     return FutureResult.error(e.toString());
   }

@@ -4,7 +4,11 @@ import 'openapi_generated_code/openapi.swagger.dart';
 import 'test_client.dart';
 
 class ExampleChopperUtils extends ChopperUtils<Openapi> {
-  ExampleChopperUtils() : testClient = createTestClient();
+  ExampleChopperUtils._() : testClient = createTestClient();
+
+  static final ExampleChopperUtils instance = ExampleChopperUtils._();
+
+  factory ExampleChopperUtils() => instance;
 
   final http.Client testClient;
 

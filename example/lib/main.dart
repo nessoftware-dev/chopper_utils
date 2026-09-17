@@ -30,12 +30,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final ExampleChopperUtils _chopperUtils = ExampleChopperUtils();
   String _lastLog = 'Ready. Press any action below to test API calls.';
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoggedIn = _chopperUtils.accessToken != null;
+    final bool isLoggedIn = ExampleChopperUtils().accessToken != null;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -112,9 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildStateCard() {
-    final bool isLoggedIn = _chopperUtils.accessToken != null;
-    final String? accessToken = _chopperUtils.accessToken;
-    final String? refreshToken = _chopperUtils.refreshToken;
+    final bool isLoggedIn = ExampleChopperUtils().accessToken != null;
+    final String? accessToken = ExampleChopperUtils().accessToken;
+    final String? refreshToken = ExampleChopperUtils().refreshToken;
     return Card(
       elevation: 2,
       child: Padding(
@@ -141,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             const Divider(),
-            _buildInfoRow('App Version:', _chopperUtils.getAppVersion()),
+            _buildInfoRow('App Version:', ExampleChopperUtils().getAppVersion()),
             const SizedBox(height: 8),
             _buildInfoRow(
               'Access Token:',
@@ -215,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await DialogUtils().showWaitingDlg<Response<AuthResponse>>(
       context: context,
       message: 'Logging in...',
-      future: () => login(_chopperUtils, username: 'demo', password: 'demo'),
+      future: () => login(username: 'demo', password: 'demo'),
     );
 
     if (!mounted) return;
@@ -227,8 +226,8 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         // The mock client deliberately returns 'expired-token' initially
         // to test automatic 401 retry on the next private call
-        _chopperUtils.accessToken = response.body!.accessToken;
-        _chopperUtils.refreshToken = response.body!.refreshToken;
+        ExampleChopperUtils().accessToken = response.body!.accessToken;
+        ExampleChopperUtils().refreshToken = response.body!.refreshToken;
       });
       _log(
         'LOGIN SUCCESS (Status: ${response.statusCode})\n'
@@ -244,14 +243,14 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await DialogUtils().showWaitingDlg<Response>(
       context: context,
       message: 'Logging out...',
-      future: () => logout(_chopperUtils),
+      future: () => logout(),
     );
 
     if (!mounted) return;
 
     setState(() {
-      _chopperUtils.accessToken = null;
-      _chopperUtils.refreshToken = null;
+      ExampleChopperUtils().accessToken = null;
+      ExampleChopperUtils().refreshToken = null;
     });
 
     if (result.hasError) {
@@ -269,7 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await DialogUtils().showWaitingDlg<Response<Message>>(
       context: context,
       message: 'Fetching public message...',
-      future: () => getPublicMessage(_chopperUtils),
+      future: () => getPublicMessage(),
     );
 
     if (!mounted) return;
@@ -285,7 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _getPrivateMessage() async {
-    final tokenBefore = _chopperUtils.accessToken;
+    final tokenBefore = ExampleChopperUtils().accessToken;
     _log(
       'GET /private-message (authenticated)...\n'
       'Current token before request: "$tokenBefore"\n'
@@ -295,12 +294,12 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await DialogUtils().showWaitingDlg<Response<Message>>(
       context: context,
       message: 'Fetching private message...',
-      future: () => getPrivateMessage(_chopperUtils),
+      future: () => getPrivateMessage(),
     );
 
     if (!mounted) return;
 
-    final tokenAfter = _chopperUtils.accessToken;
+    final tokenAfter = ExampleChopperUtils().accessToken;
     if (result.hasError) {
       _log('PRIVATE MESSAGE FAILED\nError: ${result.error}');
     } else {
@@ -320,7 +319,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = await DialogUtils().showWaitingDlg<bool>(
       context: context,
       message: 'Refreshing access token...',
-      future: () => refreshAccessToken(_chopperUtils),
+      future: () => refreshAccessToken(),
     );
 
     if (!mounted) return;
@@ -331,8 +330,8 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       _log(
         'MANUAL REFRESH SUCCESS!\n'
-        'New AccessToken:  "${_chopperUtils.accessToken}"\n'
-        'New RefreshToken: "${_chopperUtils.refreshToken}"',
+        'New AccessToken:  "${ExampleChopperUtils().accessToken}"\n'
+        'New RefreshToken: "${ExampleChopperUtils().refreshToken}"',
       );
     }
   }
