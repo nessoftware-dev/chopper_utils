@@ -23,11 +23,13 @@ class ExampleChopperUtils extends ChopperUtils<Openapi> {
 
   @override
   Openapi createOpenApiWithoutAuth() {
+    // Create unauthenticated Openapi client with standard header interceptor
     return Openapi.create(httpClient: testClient, interceptors: getOpenApiHdrInterceptor());
   }
 
   @override
   Openapi createOpenApiWithAuth() {
+    // Create authenticated Openapi client with auth interceptor and 401 authenticator
     return Openapi.create(
       httpClient: testClient,
       interceptors: getOpenApiAuthInterceptor(),
@@ -40,12 +42,14 @@ class ExampleChopperUtils extends ChopperUtils<Openapi> {
     if (refreshToken == null) {
       return false;
     }
+    // Refresh access token using unauthenticated client
     final response = await getOpenApiWithoutAuth().authRefreshPost(
       body: RefreshTokenRequest(refreshToken: refreshToken!),
     );
     if (!response.isSuccessful || (response.body == null)) {
       return false;
     }
+    // Update local tokens with refreshed values
     accessToken = response.body!.accessToken;
     refreshToken = response.body!.refreshToken;
     return true;

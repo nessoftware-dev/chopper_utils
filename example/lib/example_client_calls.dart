@@ -9,9 +9,11 @@ Future<FutureResult<Response<AuthResponse>>> login({
   required String username,
   required String password,
 }) async {
+  // Get unauthenticated API client
   final Openapi api = ExampleChopperUtils().getOpenApiWithoutAuth();
   late final Response<AuthResponse> response;
   try {
+    // Send login request
     response = await api.authLoginPost(
       body: LoginRequest(
         username: username,
@@ -31,9 +33,11 @@ Future<FutureResult<Response<AuthResponse>>> login({
 // Logs out using the authenticated OpenApi client.
 
 Future<FutureResult<Response>> logout() async {
+  // Get authenticated API client
   final Openapi api = ExampleChopperUtils().getOpenApiWithAuth();
   late final Response response;
   try {
+    // Send logout request
     response = await api.authLogoutPost();
   } catch (e) {
     return FutureResult.error(e.toString());
@@ -50,6 +54,7 @@ Future<FutureResult<Response>> logout() async {
 Future<FutureResult<bool>> refreshAccessToken() async {
   late final bool success;
   try {
+    // Refresh user access token
     success = await ExampleChopperUtils().refreshUserAccessTokenByOpenApi();
   } catch (e) {
     return FutureResult.error(e.toString());
@@ -64,9 +69,11 @@ Future<FutureResult<bool>> refreshAccessToken() async {
 // Fetches the public message using the unauthenticated OpenApi client.
 
 Future<FutureResult<Response<Message>>> getPublicMessage() async {
+  // Get unauthenticated API client
   final Openapi api = ExampleChopperUtils().getOpenApiWithoutAuth();
   late final Response<Message> response;
   try {
+    // Fetch public message
     response = await api.publicMessageGet();
   } catch (e) {
     return FutureResult.error(e.toString());
@@ -84,9 +91,11 @@ Future<FutureResult<Response<Message>>> getPublicMessage() async {
 /// the 401 response, refreshes the token, and retries automatically.
 
 Future<FutureResult<Response<Message>>> getPrivateMessage() async {
+  // Get authenticated API client
   final Openapi api = ExampleChopperUtils().getOpenApiWithAuth();
   late final Response<Message> response;
   try {
+    // Fetch private message with 401 retry
     response = await api.privateMessageGet();
   } catch (e) {
     return FutureResult.error(e.toString());

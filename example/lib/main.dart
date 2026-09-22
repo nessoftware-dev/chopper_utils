@@ -211,6 +211,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _login() async {
     _log('POST /auth/login...\nSending demo credentials');
+    // Show waiting dialog during login
     final result = await DialogUtils().showWaitingDlg<Response<AuthResponse>>(
       context: context,
       message: 'Logging in...',
@@ -223,6 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _log('LOGIN FAILED\nError: ${result.error}');
     } else {
       final response = result.value!;
+      // Update tokens in application state
       setState(() {
         // The mock client deliberately returns 'expired-token' initially
         // to test automatic 401 retry on the next private call
@@ -240,6 +242,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _logout() async {
     _log('POST /auth/logout (authenticated)...');
+    // Show waiting dialog during logout
     final result = await DialogUtils().showWaitingDlg<Response>(
       context: context,
       message: 'Logging out...',
@@ -248,6 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (!mounted) return;
 
+    // Clear tokens in application state
     setState(() {
       ExampleChopperUtils().accessToken = null;
       ExampleChopperUtils().refreshToken = null;
@@ -265,6 +269,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _getPublicMessage() async {
     _log('GET /public-message (unauthenticated)...');
+    // Show waiting dialog during public message request
     final result = await DialogUtils().showWaitingDlg<Response<Message>>(
       context: context,
       message: 'Fetching public message...',
@@ -291,6 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'Sending request with OpenApiWithAuth...',
     );
 
+    // Show waiting dialog during private message request
     final result = await DialogUtils().showWaitingDlg<Response<Message>>(
       context: context,
       message: 'Fetching private message...',
@@ -303,7 +309,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (result.hasError) {
       _log('PRIVATE MESSAGE FAILED\nError: ${result.error}');
     } else {
-      setState(() {}); // Refresh UI state card with new token
+      // Refresh UI state card with updated token
+      setState(() {});
       _log(
         'PRIVATE MESSAGE SUCCESS (Status: ${result.value!.statusCode})\n'
         'Response Body: "${result.value!.body?.message}"\n'
@@ -316,6 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _manualRefresh() async {
     _log('POST /auth/refresh via refreshUserAccessTokenByOpenApi()...');
+    // Show waiting dialog during manual token refresh
     final result = await DialogUtils().showWaitingDlg<bool>(
       context: context,
       message: 'Refreshing access token...',
@@ -324,6 +332,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (!mounted) return;
 
+    // Refresh UI state card with updated token
     setState(() {});
     if (result.hasError) {
       _log('MANUAL REFRESH FAILED: ${result.error}');
