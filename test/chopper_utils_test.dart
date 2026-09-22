@@ -66,7 +66,8 @@ void main() {
     expect(utils.createWithAuthCount, 1);
   });
 
-  test('authenticated and unauthenticated services are created independently', () {
+  test('authenticated and unauthenticated services are created independently',
+      () {
     final utils = TestChopperUtils();
 
     final withoutAuth = utils.getOpenApiWithoutAuth();
@@ -93,6 +94,6 @@ void main() {
 
     final headers = utils.getAuthHeaders('abc123');
 
-    expect(headers['Authorization'], 'Bearer abc123');
+    expect(headers['authorization'], 'Bearer abc123');
   });
 }

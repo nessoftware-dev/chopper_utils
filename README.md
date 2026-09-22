@@ -56,7 +56,6 @@ Implement the abstract methods to provide your app's version, access token, and 
 
 ```dart
 import 'package:chopper_utils/chopper_utils.dart';
-import 'package:http/http.dart' as http;
 import 'openapi_generated_code/openapi.swagger.dart';
 
 class ApiUtils extends ChopperUtils<Openapi> {
@@ -177,7 +176,7 @@ class MyChopperUtils extends ChopperUtils<MyApi> {
   }
 
   @override
-  Map<String, String> getAuthHeaders() {
+  Map<String, String> getAuthHeaders(String accessToken) {
     return {
       ...getCommonHeaders(),
       'x-custom-auth-header': 'custom-value',
@@ -194,7 +193,7 @@ If you want complete control over authenticated request headers, you can omit `g
 
 ```dart
 @override
-Map<String, String> getAuthHeaders() {
+Map<String, String> getAuthHeaders(String accessToken) {
   return {
     'authorization': 'Bearer $accessToken',
   };

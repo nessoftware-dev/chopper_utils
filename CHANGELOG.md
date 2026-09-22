@@ -1,3 +1,6 @@
 ## 0.0.1
 
-* Initial version.
+* request header injection
+* token refresh deduplication
+* 401 retry handling
+* logging interceptor support
