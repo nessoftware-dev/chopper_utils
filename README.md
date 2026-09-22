@@ -129,7 +129,7 @@ final dataResponse = await api.getOpenApiWithAuth().getProtectedData();
 
 `ChopperUtils` provides flexible options for customizing request headers.
 
-For simple use cases, you can customize individual headers such as `Accept`, `Content-Type`, or `Authorization`.
+For simple use cases, you can customize individual headers such as **Authorization** header format and name, **App Version** header name, or **Platform** header name.
 
 For more advanced use cases, you can override `getCommonHeaders()` and/or `getAuthHeaders()` to customize the complete set of headers used by the client.
 
