@@ -119,6 +119,12 @@ final loginResponse = await api.getOpenApiWithoutAuth().login(
   // your login parameters
 );
 
+// Store tokens returned from login so getAccessToken() and refresh logic can use them
+if (loginResponse.isSuccessful && loginResponse.body != null) {
+  api.accessToken = loginResponse.body!.accessToken;
+  api.refreshToken = loginResponse.body!.refreshToken;
+}
+
 // Protected call (automatically injects Bearer token and retries on 401)
 final dataResponse = await api.getOpenApiWithAuth().getProtectedData();
 ```
