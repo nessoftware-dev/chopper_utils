@@ -220,7 +220,7 @@ A typical implementation can use a singleton:
 
 ```dart
 class AppChopperUtils extends ChopperUtils<Openapi> {
-  AppChopperUtils._() : super(useHttpLogging: true); // enable http logging or just use AppChopperUtils._(); which disables http logging
+  AppChopperUtils._() : super(useHttpLogging: true); // enable http logging or just use AppChopperUtils._();
 
   static final AppChopperUtils instance = AppChopperUtils._();
 
@@ -243,7 +243,7 @@ For more information, see the [`future_result`](https://pub.dev/packages/future_
 
 ```dart
 Future<FutureResult<Response<Message>>> getPrivateMessage() async {
-  final MyApi api = AppChopperUtils().getOpenApiWithAuth();
+  final Openapi api = AppChopperUtils().getOpenApiWithAuth();
   try {
     final response = await api.privateMessageGet();
     if (response.isSuccessful) {
@@ -252,9 +252,10 @@ Future<FutureResult<Response<Message>>> getPrivateMessage() async {
     return FutureResult.error('api.privateMessageGet failed. Status: ${response.statusCode}, error: ${response.error}',
     );
   } catch (e) {
-    return FutureResult.error('api.privateMessageGet catched an exception: ${e.toString()}.');
+    return FutureResult.error('api.privateMessageGet caught an exception: ${e.toString()}.');
   }
 }
+```
 
 The rest of the application can call the operation without dealing with Chopper configuration:
 
