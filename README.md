@@ -282,6 +282,27 @@ For a complete implementation of this approach, see the example:
 - [`example_chopper_utils.dart`](example/lib/example_chopper_utils.dart) — shared `ChopperUtils` instance and client configuration
 - [`example_client_calls.dart`](example/lib/example_client_calls.dart) — API operations built on top of the shared instance
 
+
+### Reacting to a Failed Token Refresh
+
+`refreshUserAccessTokenCompleterByOpenApi()` can be overridden in your `ChopperUtils` implementation if the application needs to react when refreshing the access token fails.
+
+For example, an application may want to invalidate its local session and notify the UI so that the user can log in again:
+
+```dart
+@override
+Future<bool> refreshUserAccessTokenCompleterByOpenApi() async {
+  final success = await super.refreshUserAccessTokenCompleterByOpenApi();
+  if (!success) {
+    // Notify the application that the user session has expired.
+    // For example: authStateController.sessionExpired();
+  }
+  return success;
+}
+```
+
+The base implementation coalesces concurrent refresh requests, so only one refresh operation is performed when multiple requests fail with `401` at the same time. However, multiple callers can still receive the resulting `false` value. If the application reacts to the failure by triggering a global logout or navigation, make sure that this reaction is handled only once.
+
 ---
 
 ## How 401 Handling Works
