@@ -58,8 +58,8 @@ Implement the abstract methods to provide your app's version, access token, and 
 import 'package:chopper_utils/chopper_utils.dart';
 import 'openapi_generated_code/openapi.swagger.dart';
 
-class ApiUtils extends ChopperUtils<Openapi> {
-  ApiUtils({super.useHttpLogging});
+class AppChopperUtils extends ChopperUtils<Openapi> {
+  AppChopperUtils({super.useHttpLogging});
 
   String? accessToken;
   String? refreshToken;
@@ -112,7 +112,7 @@ class ApiUtils extends ChopperUtils<Openapi> {
 Use `getOpenApiWithoutAuth()` for public endpoints (login, registration) and `getOpenApiWithAuth()` for protected endpoints:
 
 ```dart
-final api = ApiUtils(useHttpLogging: true);
+final api = AppChopperUtils(useHttpLogging: true);
 
 // Public call (unauthenticated) — e.g. login, register, or public resources
 final loginResponse = await api.getOpenApiWithoutAuth().login(
@@ -144,7 +144,7 @@ For more advanced use cases, you can override `getCommonHeaders()` and/or `getAu
 You can override the individual header methods provided by `ChopperUtils`:
 
 ```dart
-class MyChopperUtils extends ChopperUtils<MyApi> {
+class AppChopperUtils extends ChopperUtils<Openapi> {
   @override
   String getAuthorizationHeader(String accessToken) {
     return 'Token $accessToken';
@@ -170,7 +170,7 @@ If you need more control over the headers, you can override `getCommonHeaders()`
 By default, `getAuthHeaders()` includes the headers returned by `getCommonHeaders()` and adds the authentication-specific headers.
 
 ```dart
-class MyChopperUtils extends ChopperUtils<MyApi> {
+class AppChopperUtils extends ChopperUtils<Openapi> {
   @override
   Map<String, String> getCommonHeaders() {
     return {
@@ -207,6 +207,79 @@ Map<String, String> getAuthHeaders(String accessToken) {
 ```
 
 Use the individual header methods when you only need to change specific headers. Use `getCommonHeaders()` and/or `getAuthHeaders()` when you need more control over the complete set of request headers.
+
+---
+
+### Recommended: Centralize API Access
+
+For larger applications, it is recommended to keep a single `ChopperUtils` instance and expose API operations through dedicated service functions.
+
+This keeps client creation, authentication, token refresh, and error handling in one place. Callers do not need to know how the Chopper clients are configured.
+
+A typical implementation can use a singleton:
+
+```dart
+class AppChopperUtils extends ChopperUtils<Openapi> {
+  AppChopperUtils._() : super(useHttpLogging: true); // enable http logging or just use AppChopperUtils._(); which disables http logging
+
+  static final AppChopperUtils instance = AppChopperUtils._();
+
+  factory AppChopperUtils() => instance;
+
+  String? accessToken;
+  String? refreshToken;
+
+  // ... ChopperUtils implementation
+}
+```
+
+> **Note:** `ChopperUtils` does not provide persistent storage for access or refresh tokens. This is intentional. Token storage is application-specific and is usually part of the application's existing user/session data management. For example, an application may already persist the user's profile and authentication data using its chosen storage solution. Providing another storage mechanism here would therefore be redundant and could unnecessarily constrain the application's architecture.
+
+API operations can then use the shared instance and return a `FutureResult`:
+
+`FutureResult` provides a consistent way to represent either a successful result or an error without throwing exceptions from the service layer. This makes API calls easier to consume and keeps error handling consistent across the application.
+
+For more information, see the [`future_result`](https://pub.dev/packages/future_result) package.
+
+```dart
+Future<FutureResult<Response<Message>>> getPrivateMessage() async {
+  final MyApi api = AppChopperUtils().getOpenApiWithAuth();
+  try {
+    final response = await api.privateMessageGet();
+    if (response.isSuccessful) {
+      return FutureResult.success(response);
+    }
+    return FutureResult.error('api.privateMessageGet failed. Status: ${response.statusCode}, error: ${response.error}',
+    );
+  } catch (e) {
+    return FutureResult.error('api.privateMessageGet catched an exception: ${e.toString()}.');
+  }
+}
+
+The rest of the application can call the operation without dealing with Chopper configuration:
+
+```dart
+final result = await getPrivateMessage();
+if (result.hasError) {
+  // Handle error
+} else {
+  final response = result.value;
+  // Use response
+}
+```
+
+This approach has several advantages:
+- API client configuration is centralized.
+- Authentication and token refresh remain encapsulated in `ChopperUtils`.
+- API operations can expose a simple interface to the rest of the application.
+- Service-layer API calls can consistently use `FutureResult` for error handling.
+- The application does not need to know whether a request uses an authenticated or unauthenticated Chopper client.
+
+For small applications, calling `getOpenApiWithoutAuth()` and `getOpenApiWithAuth()` directly is also perfectly valid.
+
+For a complete implementation of this approach, see the example:
+- [`example_chopper_utils.dart`](example/lib/example_chopper_utils.dart) — shared `ChopperUtils` instance and client configuration
+- [`example_client_calls.dart`](example/lib/example_client_calls.dart) — API operations built on top of the shared instance
 
 ---
 
