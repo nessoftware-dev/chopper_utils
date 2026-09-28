@@ -43,7 +43,7 @@ Add `chopper_utils` to your `pubspec.yaml`:
 ```yaml
 dependencies:
   chopper: ^8.4.0
-  chopper_utils: ^0.0.1
+  chopper_utils: ^0.0.2
 ```
 
 ---
@@ -311,3 +311,11 @@ The base implementation coalesces concurrent refresh requests, so only one refre
 2. **Concurrent Requests**: If multiple requests fail with `401` around the same time, the first one initiates the refresh; any others wait on the same `Completer`.
 3. **In-flight Detection**: If a request's 401 response arrives *after* another request has already refreshed the token, it immediately retries with the new token without triggering a redundant refresh.
 4. **Loop Protection**: If a retried request still fails with 401 using the refreshed token, the authenticator returns `null`, preventing infinite retry loops.
+
+---
+
+## Architecture guide
+
+For a broader example of using `chopper_utils` in a Flutter networking architecture, including service, repository, result, and UI layers, read the article:
+
+[Flutter networking architecture](https://www.nessoftware.de/Flutter/flutter-networking-architecture.html)
