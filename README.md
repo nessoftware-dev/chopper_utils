@@ -42,9 +42,11 @@ Add `chopper_utils` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  chopper: ^8.4.0
-  chopper_utils: ^0.0.2
+  chopper: ^8.7.1
+  chopper_utils: ^1.0.0
 ```
+
+Then run `flutter pub get`.
 
 ---
 

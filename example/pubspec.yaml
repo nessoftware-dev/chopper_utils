@@ -38,13 +38,13 @@ dependencies:
   chopper_utils:
     path: ..
   # DialogUtils
-  dialog_utils: ^0.0.3
+  dialog_utils: ^1.0.0
   # ResultUtils: 
-  result_utils: ^0.0.1
+  result_utils: ^1.0.1
   # MockClient
   http: ^1.6.0
   # Swagger / OpenApi
-  chopper: ^8.4.0
+  chopper: ^8.7.1
   json_annotation: ^4.9.0
 
 dev_dependencies:

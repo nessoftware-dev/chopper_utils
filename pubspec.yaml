@@ -1,6 +1,6 @@
 name: chopper_utils
 description: "Authentication utilities for Chopper-generated OpenAPI clients, with common request headers, coordinated access-token refresh, automatic 401 retries, and optional HTTP logging."
-version: 0.0.2
+version: 1.0.0
 homepage: https://github.com/nessoftware-dev/chopper_utils
 repository: https://github.com/nessoftware-dev/chopper_utils
 issue_tracker: https://github.com/nessoftware-dev/chopper_utils/issues
@@ -17,8 +17,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  chopper: ^8.4.0
-  result_utils: ^0.0.1
+  chopper: ^8.7.1
+  result_utils: ^1.0.1
 
 dev_dependencies:
   flutter_test:

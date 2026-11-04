@@ -1,3 +1,7 @@
+## 1.0.0
+
+* Updated package versions
+
 ## 0.0.2
 
 * Improved ReadMe (Recommended: Centralize API Access, Reacting to a Failed Token Refresh)
